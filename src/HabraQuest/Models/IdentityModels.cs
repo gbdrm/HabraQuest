@@ -15,8 +15,11 @@ namespace HabraQuest.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<QuestTask> Tasks { get; set; }
+        public DbSet<Progress> Progress { get; set; }
+
+
         private static bool _created = false;
-        
         public ApplicationDbContext()
         {            
             // Create the database and schema if it doesn't exist
