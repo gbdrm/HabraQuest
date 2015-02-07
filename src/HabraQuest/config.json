@@ -1,9 +1,10 @@
 ﻿{
-    "Data": {
-        "DefaultConnection": { 
-            "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-HabraQuest-7a07e396-c53a-48e2-8538-11bb6329e68a;Trusted_Connection=True;MultipleActiveResultSets=true"
-        }
-    },
+	"Data": {
+		"DefaultConnection": {
+			//"ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-HabraQuest-7a07e396-c53a-48e2-8538-11bb6329e68a;Trusted_Connection=True;MultipleActiveResultSets=true"
+			"ConnectionString": "Data Source=(LocalDb)\\v12.0;Initial Catalog=habraquest;Integrated Security=True"
+		}
+	},
     "EntityFramework": {
         "ApplicationDbContext": {
             "ConnectionStringKey": "Data:DefaultConnection:ConnectionString"

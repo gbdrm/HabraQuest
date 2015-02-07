@@ -26,7 +26,7 @@ namespace HabraQuest
                 .AddEnvironmentVariables();
         }
 
-        public IConfiguration Configuration { get; set; }
+        public static IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
@@ -34,7 +34,8 @@ namespace HabraQuest
             // Add EF services to the services container.
             services.AddEntityFramework(Configuration)
                 .AddSqlServer()
-                .AddDbContext<ApplicationDbContext>();
+                .AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                Configuration.Get("Data:DefaultConnection:ConnectionString")));
 
             // Add Identity services to the services container.
             services.AddIdentity<ApplicationUser, IdentityRole>(Configuration)

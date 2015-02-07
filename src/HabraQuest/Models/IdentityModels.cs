@@ -27,6 +27,8 @@ namespace HabraQuest.Models
             // are supported in ASP.NET 5
             if (!_created)
             {
+                var xx = Database.AsMigrationsEnabled();
+
                 Database.AsMigrationsEnabled().ApplyMigrations();
                 _created = true;
             }
@@ -34,7 +36,7 @@ namespace HabraQuest.Models
         
         protected override void OnConfiguring(DbContextOptions options)
         {
-            options.UseSqlServer();
+            options.UseSqlServer(Startup.Configuration.Get("Data:DefaultConnection:ConnectionString"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
