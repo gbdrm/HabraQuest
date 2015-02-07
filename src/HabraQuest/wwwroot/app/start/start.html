@@ -1,0 +1,21 @@
+﻿<div class="jumbotron" data-ng-controller="start as vm">
+    <div data-ng-hide="vm.lastTask">
+        <p class="lead">
+            {{vm.taskTitle}}
+        </p>
+        <br />
+        <h2>{{vm.taskContent}}</h2>
+        <form ng-submit="vm.submit()">
+            <div class="form-group">
+                <input type="text" class="form-control" autofocus="autofocus" placeholder="" ng-model="vm.answer">
+                <br />
+                <a href="" class="btn btn-success" data-ng-click="vm.submit()">Отправить</a>
+            </div>
+        </form>
+        <br />
+        <div>{{vm.hints}}</div>
+    </div>
+    <div data-ng-show="vm.lastTask">
+        <h3>Поздравляем, вы прошли все задания.</h3>
+    </div>
+</div>
