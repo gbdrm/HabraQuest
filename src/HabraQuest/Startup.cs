@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Diagnostics.Entity;
@@ -13,6 +14,8 @@ using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.Logging.Console;
 using HabraQuest.Models;
+using Microsoft.AspNet.Mvc;
+using Newtonsoft.Json.Serialization;
 
 namespace HabraQuest
 {
@@ -42,7 +45,15 @@ namespace HabraQuest
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add MVC services to the services container.
-            services.AddMvc();
+            services.AddMvc().Configure<MvcOptions>(options =>
+            {
+                options.OutputFormatters
+                           .Where(f => f.Instance is JsonOutputFormatter)
+                           .Select(f => f.Instance as JsonOutputFormatter)
+                           .First()
+                           .SerializerSettings
+                           .ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
 
             // Uncomment the following line to add Web API servcies which makes it easier to port Web API 2 controllers.
             // You need to add Microsoft.AspNet.Mvc.WebApiCompatShim package to project.json

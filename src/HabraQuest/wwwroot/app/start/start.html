@@ -1,21 +1,51 @@
 ﻿<div class="jumbotron" data-ng-controller="start as vm">
     <div data-ng-hide="vm.lastTask">
-        <p class="lead">
-            {{vm.taskTitle}}
-        </p>
-        <br />
-        <h2>{{vm.taskContent}}</h2>
-        <form ng-submit="vm.submit()">
-            <div class="form-group">
-                <input type="text" class="form-control" autofocus="autofocus" placeholder="" ng-model="vm.answer">
-                <br />
-                <a href="" class="btn btn-success" data-ng-click="vm.submit()">Отправить</a>
+        <div data-ng-show="vm.taskTitle">
+            <p class="lead">
+                {{vm.taskTitle}}
+            </p>
+
+            <h3 style="max-width: 400px">{{vm.taskContent}}</h3>
+            <br/>
+            <form ng-submit="vm.submit()">
+                <div class="form-group">
+                    <input type="text" class="form-control" autofocus="autofocus" placeholder="" ng-model="vm.answer">
+                    <br />
+                    <a href="" class="btn btn-success" data-ng-click="vm.submit()">Отправить</a>
+                </div>
+            </form>
+            <br />
+            <div ng-style="{ 'color' : vm.hintColor }">
+                <b>{{vm.hints}}</b>
             </div>
-        </form>
+        </div>
+        <div data-ng-hide="vm.taskTitle">
+            Загрузка....
+        </div>
         <br />
-        <div>{{vm.hints}}</div>
+        <div>Просмотрено - {{vm.watched}}</div>
+        <div>Пройдено - {{vm.done}}</div>
     </div>
     <div data-ng-show="vm.lastTask">
         <h3>Поздравляем, вы прошли все задания.</h3>
+        <br/>
+        <h5>Вы можете вписать свое имя на доску почета</h5>
+
+        <form ng-submit="vm.sendName()">
+            <div class="input-group">
+                <input type="text" class="form-control" autofocus="autofocus" placeholder="" ng-model="vm.name">
+                <span class="input-group-btn">
+                    <a href="" class="btn btn-info" data-ng-click="vm.sendName()">Отправить</a>
+                </span>
+            </div>
+        </form>
+
+        <div style="max-height: 200px;overflow: auto;">
+            <ul>
+                <li ng-repeat="message in vm.messages">[{{user.time}}]: {{user.name}}</li>
+            </ul>
+        </div>
+        <br />
+        <a href="" class="btn btn-info" data-ng-click="vm.startAgain()">Начать сначала</a>
     </div>
 </div>

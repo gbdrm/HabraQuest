@@ -9,14 +9,18 @@
 
     function mainQuestService($resource) {
         var service = {
-            submitAnswer: submitAnswer
+            submitAnswer: submitAnswer,
+            Statistics: getStatistics
         };
 
         return service;
 
         function submitAnswer() {
-            var requestUri = 'api/mainQuest';
-            return $resource(requestUri);
+            return $resource('api/quest');
+        }
+
+        function getStatistics() {
+            return $resource('api/statistics');
         }
     }
 })();
