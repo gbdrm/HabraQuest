@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using HabraQuest.Models;
 using Microsoft.AspNet.Mvc;
@@ -29,25 +30,40 @@ namespace HabraQuest.Controllers
 
         // POST api/Statistics
         [HttpPost]
-        public Finisher[] Post(string token, string name)
+        public Finisher[] Post([FromBody]SaveNameRequest data)
         {
+            if (data == null) return Array.Empty<Finisher>();
+            var name = data.Name;
+            var token = data.Token;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 var current = db.Progress.FirstOrDefault(_ => _.Token == token);
                 if (current != null && current.TaskNumber == 999)
                 {
-                    return null;
+                    var alreadyAdded = db.Finishers.Any(_ => _.Token == token);
+                    if (!alreadyAdded)
+                    {
+                        var finisher = new Finisher()
+                        {
+                            Name = name,
+                            Token = token,
+                            Time = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+                        };
+                        db.Finishers.Add(finisher);
+                        db.SaveChanges();
+                    }
+
+                    return db.Finishers.ToArray();
                 }
                 return null;
             }
         }
     }
 
-    public class Finisher
+    public class SaveNameRequest
     {
-        public int Id { get; set; }
+        public string Token { get; set; }
         public string Name { get; set; }
-        public DateTime Time { get; set; }
     }
 
     public class StatisticsResult

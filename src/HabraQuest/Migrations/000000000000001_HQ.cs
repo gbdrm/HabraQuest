@@ -21,7 +21,7 @@ namespace HabraQuest.Migrations
                 .PrimaryKey("PK_Progress", t => t.Id);
 
             migrationBuilder.CreateTable(
-                "QuestTasks",
+                "QuestTask",
                 c => new
                 {
                     Id = c.Int(nullable: false, identity: true),
@@ -30,13 +30,13 @@ namespace HabraQuest.Migrations
                     Number = c.Int(nullable: false),
                     Answer = c.String(),
                 })
-                .PrimaryKey("PK_QuestTasks", t => t.Id);
+                .PrimaryKey("PK_QuestTask", t => t.Id);
 
         }
 
         public override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("QuestTasks");
+            migrationBuilder.DropTable("QuestTask");
             migrationBuilder.DropTable("Progress");
         }
     }
@@ -77,7 +77,7 @@ namespace HabraQuest.Migrations
                     b.Property<int>("Number");
                     b.Property<string>("Answer");
                     b.Key("Id");
-                    b.ForRelational().Table("QuestTasks");
+                    b.ForRelational().Table("QuestTask");
                 });
 
                 return builder.Model;

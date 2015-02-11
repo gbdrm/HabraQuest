@@ -40,9 +40,13 @@
             </div>
         </form>
 
-        <div style="max-height: 200px;overflow: auto;">
+        <div style="max-height: 200px; overflow: auto;">
+            <br/>
+            <b>Уже финишировали:</b>
+            <br/>
+            <br />
             <ul>
-                <li ng-repeat="message in vm.messages">[{{user.time}}]: {{user.name}}</li>
+                <li ng-repeat="user in vm.users">[{{user.time}}] - {{user.name}}</li>
             </ul>
         </div>
         <br />

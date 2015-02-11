@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
+using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.OptionsModel;
 
 namespace HabraQuest.Models
@@ -13,10 +14,11 @@ namespace HabraQuest.Models
 
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : DbContext // IdentityDbContext<ApplicationUser>
     {
-        public DbSet<QuestTask> Tasks { get; set; }
+        public DbSet<QuestTask> QuestTask { get; set; }
         public DbSet<Progress> Progress { get; set; }
+        public DbSet<Finisher> Finishers { get; set; }
 
 
         private static bool _created = false;
@@ -36,7 +38,10 @@ namespace HabraQuest.Models
         
         protected override void OnConfiguring(DbContextOptions options)
         {
-            options.UseSqlServer(Startup.Configuration.Get("Data:DefaultConnection:ConnectionString"));
+            var xConfiguration = new Microsoft.Framework.ConfigurationModel.Configuration()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables();
+            options.UseSqlServer(xConfiguration.Get("Data:DefaultConnection:ConnectionString"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

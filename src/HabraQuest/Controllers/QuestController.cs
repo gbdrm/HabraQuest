@@ -45,7 +45,12 @@ namespace HabraQuest.Controllers
                     var current = db.Progress.FirstOrDefault(_ => _.Token == token);
                     if (current == null || (current.TaskNumber != taskNumber && taskNumber != -1))
                     {
-                        return null;
+                        return new MainQuestViewModel
+                        {
+                            IsAnswerRight = false,
+                            Task = null,
+                            Token = null
+                        };
                     }
 
                     // if user already finished
@@ -61,7 +66,7 @@ namespace HabraQuest.Controllers
                     var isRight = taskNumber == -1;
                     if (!isRight)
                     {
-                        var task = db.Tasks.SingleOrDefault(_ => _.Number == taskNumber);
+                        var task = db.QuestTask.SingleOrDefault(_ => _.Number == taskNumber);
                         if (task != null)
                         {
                             isRight = task.Answer.Split(',').Contains(answer?.ToLower() ?? "");
@@ -94,15 +99,18 @@ namespace HabraQuest.Controllers
 
         // POST api/MainQuest
         [HttpPost]
-        public void Post(string token, bool startAgaing)
+        public void Post([FromBody]StartAgainRequest startAgainRequest)
         {
-            if (startAgaing)
+            if (startAgainRequest != null && startAgainRequest.StartAgaing)
             {
                 using (var db = new ApplicationDbContext())
                 {
-                    var progress = db.Progress.Single(_ => _.Token == token);
-                    progress.TaskNumber = 1;
-                    db.SaveChanges();
+                    var progress = db.Progress.SingleOrDefault(_ => startAgainRequest != null && _.Token == startAgainRequest.Token);
+                    if (progress != null)
+                    {
+                        progress.TaskNumber = 1;
+                        db.SaveChanges();
+                    }
                 }
             }
         }
@@ -112,11 +120,11 @@ namespace HabraQuest.Controllers
             QuestTask nextTask = null;
             if (taskNumber == -1)
             {
-                nextTask = db.Tasks.SingleOrDefault(_ => _.Number == current.TaskNumber);
+                nextTask = db.QuestTask.SingleOrDefault(_ => _.Number == current.TaskNumber);
             }
             else if (isRight)
             {
-                nextTask = db.Tasks.FirstOrDefault(t => t.Id > taskNumber);
+                nextTask = db.QuestTask.FirstOrDefault(t => t.Id > taskNumber);
             }
 
             return nextTask != null
@@ -128,6 +136,12 @@ namespace HabraQuest.Controllers
                 }
                 : null;
         }
+    }
+
+    public class StartAgainRequest
+    {
+        public string Token { get; set; }
+        public bool StartAgaing { get; set; }
     }
 
     public class MainQuestViewModel

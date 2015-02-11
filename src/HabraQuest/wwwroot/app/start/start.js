@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
     var controllerId = 'start';
-    angular.module('app').controller(controllerId, ['$cookies', 'mainQuest', start]);
+    angular.module('app').controller(controllerId, ['$cookies', '$http', 'mainQuest', start]);
 
-    function start($cookies, mainQuestSvc) {
+    function start($cookies, $http, mainQuestSvc) {
         var vm = this;
         vm.hints = "";
         vm.answer = "";
@@ -37,13 +37,15 @@
 
             mainQuestSvc.submitAnswer().get({ token: vm.userToken, taskNumberString: "-1" }, function (result) {
                 if (result) {
-                    if (!result.task) {
+                    if (!result.task && result.isAnswerRight) {
                         vm.lastTask = true;
                         return;
                     }
-                    vm.taskId = result.task.number;
-                    vm.taskTitle = result.task.title;
-                    vm.taskContent = result.task.content;
+                    if (result.task) {
+                        vm.taskId = result.task.number;
+                        vm.taskTitle = result.task.title;
+                        vm.taskContent = result.task.content;
+                    }
                     vm.answer = "";
                     $cookies.token = result.token;
                     vm.userToken = result.token;
@@ -52,6 +54,21 @@
         };
 
         activate();
+
+        vm.sendName = function () {
+            var data = { "token": vm.userToken, "name": vm.name };
+            $http.post(
+                '/api/statistics',
+                JSON.stringify(data),
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            ).success(function (data) {
+                vm.users = data;
+            });
+        }
 
         vm.startAgain = function () {
             mainQuestSvc.submitAnswer().save({ token: vm.userToken, startAgaing: 'true' });
