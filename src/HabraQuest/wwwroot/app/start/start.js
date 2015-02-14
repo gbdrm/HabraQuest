@@ -113,7 +113,7 @@
                             }
                         });
                     } else {
-                        vm.hints = "Ответ не верный.";
+                        vm.hints = "Ответ неверный.";
                         refreshHintStyle();
                     }
                     vm.answer = "";
