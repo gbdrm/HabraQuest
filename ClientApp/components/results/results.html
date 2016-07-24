@@ -1,0 +1,22 @@
+﻿<h1>Результаты</h1>
+
+<p *ngIf="!results"><em>Loading...</em></p>
+
+<table class='table' *ngIf="results">
+    <thead>
+        <tr>
+            <th>Место</th>
+            <th>Имя</th>
+            <th>Время финиша</th>
+            <th>Комментарии</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let result of results">
+        <td>{{ result.rank }}</td>
+        <td>{{ result.name }}</td>
+        <td>{{ result.dateFormatted }}</td>
+        <td>{{ result.summary }}</td>
+    </tr>
+    </tbody>
+</table>

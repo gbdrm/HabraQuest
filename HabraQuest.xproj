@@ -15,6 +15,8 @@
     <DevelopmentServerPort>2018</DevelopmentServerPort>
   </PropertyGroup>
   <ItemGroup>
+    <DnxInvisibleFolder Include=".git\" />
+    <DnxInvisibleFolder Include=".vs\" />
     <DnxInvisibleFolder Include="archive\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
