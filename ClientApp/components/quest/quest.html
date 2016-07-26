@@ -1,7 +1,24 @@
-﻿<h2>Квест</h2>
+﻿<div style="margin-top: 50px">
+    <div>
+        <p class="lead">
+            {{task.title}}
+        </p>
 
-<p>This is a simple example of an Angular 2 component.</p>
-
-<p>Current count: <strong>{{ currentCount }}</strong></p>
-
-<button (click)="incrementCounter()">Increment</button>
+        <h3 style="max-width: 400px">{{task.content}}</h3>
+        <br />
+        <form (submit)="submit()">
+            <div class="form-group">
+                <input type="text" name="answer" class="form-control" autofocus="autofocus" placeholder="" [(ngModel)]="answer">
+                <br />
+                <a class="btn btn-success" (click)="submit()">Отправить</a>
+            </div>
+        </form>
+        <br />
+        <div ng-style="{ 'color' : hintColor }">
+            <b>{{hints}}</b>
+        </div>
+    </div>
+    <br />
+    <div>Просмотрено - {{task.watched}}</div>
+    <div>Пройдено - {{task.done}}</div>
+</div>
