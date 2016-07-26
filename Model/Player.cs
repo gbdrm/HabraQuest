@@ -9,5 +9,6 @@ namespace HabraQuest.Model
         public int TaskNumber { get; set; }
         public string Name { get; set; }
         public string Comment { get; set; }
+        public bool HasFinished { get; set; }
     }
 }

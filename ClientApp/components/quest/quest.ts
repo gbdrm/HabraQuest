@@ -24,7 +24,7 @@ export class Quest {
     }
 
     submit() {
-        this.http.get('/home/submitanswer', { withCredentials: true })
+        this.http.get('/home/submitanswer?answer=' + this.answer, { withCredentials: true })
             .subscribe(result => {
                 this.task = result.json().task;
                 this.answer = '';

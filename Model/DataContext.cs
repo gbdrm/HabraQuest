@@ -11,5 +11,6 @@ namespace HabraQuest.Model
 
 
         public DbSet<Player> Players { get; set; }
+        public DbSet<QuestTask> Tasks{ get; set; }
     }
 }

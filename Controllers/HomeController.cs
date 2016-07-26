@@ -24,15 +24,60 @@ namespace HabraQuest.Controllers
             return View();
         }
 
-        public Player InitializePlayer()
+        public dynamic GetCurrentState()
+        {
+            Player player = GetPlayer();
+            var task = dataContext.Tasks.Single(t => t.Id == player.TaskNumber);
+
+            return new
+            {
+                Task = task,
+                Player = player
+            };
+        }
+
+        public dynamic SubmitAnswer(string answer)
+        {
+            var token = Request.Cookies["playerToken"];
+            if (token == null)
+            {
+                return BadRequest("something went wrong");
+            }
+
+            var player = dataContext.Players.Single(p => p.Token.ToString() == token);
+            var task = dataContext.Tasks.Single(t => t.Id == player.TaskNumber);
+            if (task.Answers.Split(',').Contains(answer.ToLower()))
+            {
+                if (task.Id == 9)
+                {
+                    //finish
+                    return null;
+                }
+
+                var nextTask = dataContext.Tasks.Single(t => t.Id == task.Id + 1);
+                player.TaskNumber++;
+                dataContext.SaveChanges();
+
+                return new { Task = nextTask, Player = player };
+            }
+
+            return new
+            {
+                Task = task,
+                Player = GetPlayer(token),
+            };
+        }
+
+        private Player GetPlayer(string token = null)
         {
             Player player = null;
-            var token = Request.Cookies["playerToken"];
+            if (token == null) token = Request.Cookies["playerToken"];
             if (token == null)
             {
                 player = new Player
                 {
-                    Token = Guid.NewGuid()
+                    Token = Guid.NewGuid(),
+                    TaskNumber = 0
                 };
 
                 dataContext.Add(player);
@@ -41,42 +86,5 @@ namespace HabraQuest.Controllers
 
             return player ?? dataContext.Players.Single(p => p.Token.ToString() == token);
         }
-
-        public dynamic GetCurrentState()
-        {
-            return new
-            {
-                Task = new QuestTask
-                {
-                    Id = 2,
-                    Title = "Шта?",
-                    Content = "Превед, креведко"
-                },
-                Player = InitializePlayer(),
-            };
-        }
-
-        public dynamic SubmitAnswer()
-        {
-            return new
-            {
-                Task = new QuestTask
-                {
-                    Id = 3,
-                    Title = "Шта?2",
-                    Content = "Превед, креведко. ololo"
-                },
-                Player = InitializePlayer(),
-            };
-        }
-    }
-
-    public class QuestTask
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public int Watched { get; set; }
-        public int Done { get; set; }
     }
 }
