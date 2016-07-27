@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HabraQuest.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -46,26 +47,40 @@ namespace HabraQuest.Controllers
 
             var player = dataContext.Players.Single(p => p.Token.ToString() == token);
             var task = dataContext.Tasks.Single(t => t.Id == player.TaskNumber);
-            if (task.Answers.Split(',').Contains(answer.ToLower()))
+            if (!string.IsNullOrEmpty(answer) && task.Answers.Split(',').Contains(answer.ToLower()))
             {
-                if (task.Id == 9)
+                var nextTask = dataContext.Tasks.SingleOrDefault(t => t.Id == task.Id + 1);
+                if (nextTask == null)
                 {
                     //finish
                     return null;
                 }
 
-                var nextTask = dataContext.Tasks.Single(t => t.Id == task.Id + 1);
                 player.TaskNumber++;
                 dataContext.SaveChanges();
 
-                return new { Task = nextTask, Player = player };
+                return new { Task = nextTask, Player = player, Feedback = GetPositiveFeedback() };
             }
 
             return new
             {
                 Task = task,
                 Player = GetPlayer(token),
+                Feedback = GetNegativeFeedback()
             };
+        }
+
+        readonly Random rnd = new Random();
+        private readonly string[] negatives = {"Нет.", "неа", "не верно", "Ответ не правильный", "Мимо"};
+        private readonly string[] positives = { "Да!", "Правильно", "Верно", "Ответ принят", "Правильно" };
+        private string GetNegativeFeedback()
+        {
+            return negatives[rnd.Next(0, 5)];
+        }
+
+        private string GetPositiveFeedback()
+        {
+            return positives[rnd.Next(0, 5)];
         }
 
         private Player GetPlayer(string token = null)
@@ -77,7 +92,7 @@ namespace HabraQuest.Controllers
                 player = new Player
                 {
                     Token = Guid.NewGuid(),
-                    TaskNumber = 0
+                    TaskNumber = 1
                 };
 
                 dataContext.Add(player);

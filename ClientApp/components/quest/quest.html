@@ -14,11 +14,8 @@
             </div>
         </form>
         <br />
-        <div ng-style="{ 'color' : hintColor }">
-            <b>{{hints}}</b>
+        <div [style.color]="hintColor">
+            <b>{{feedback}}</b>
         </div>
     </div>
-    <br />
-    <div>Просмотрено - {{task.watched}}</div>
-    <div>Пройдено - {{task.done}}</div>
 </div>
