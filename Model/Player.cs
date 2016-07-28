@@ -10,5 +10,6 @@ namespace HabraQuest.Model
         public string Name { get; set; }
         public string Comment { get; set; }
         public bool HasFinished { get; set; }
+        public string Email { get; set; }
     }
 }

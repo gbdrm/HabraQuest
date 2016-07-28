@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HabraQuest.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabraQuest.Controllers
@@ -9,18 +8,22 @@ namespace HabraQuest.Controllers
     [Route("api/[controller]")]
     public class Results : Controller
     {
+        private readonly DataContext dataContext;
+        public Results(DataContext db)
+        {
+            dataContext = db;
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<ResultItem> Fetch()
         {
-            int r = 1;
-            // TODO: change from Mock data, max = 100 ?
-            return Enumerable.Range(1, 6).Select(index => new ResultItem
+            var finieshed = dataContext.Players.Where(p => p.HasFinished).Take(100).Select(item => new ResultItem
             {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                Summary = "Ololo",
-                Rank = r++,
-                Name = "Test Player"
+                Summary = item.Comment.Length>160? item.Comment.Substring(0, 150) + "..." : item.Comment,
+                Name = item.Name
             });
+
+            return finieshed;
         }
 
         public class ResultItem

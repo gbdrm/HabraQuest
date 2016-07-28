@@ -25,16 +25,44 @@ namespace HabraQuest.Controllers
             return View();
         }
 
+        [HttpPost]
+        public dynamic Finish([FromBody]FinishForm form)
+        {
+            var token = Request.Cookies["playerToken"];
+            if (token == null)
+            {
+                return BadRequest("something went wrong");
+            }
+
+            var player = dataContext.Players.SingleOrDefault(p => p.Token.ToString() == token);
+            if (player == null || !player.HasFinished || !string.IsNullOrEmpty(player.Name))
+            {
+                return BadRequest("something went wrong");
+            }
+
+            player.Name = form.Name;
+            player.Comment = form.Message;
+            player.Email = form.Email;
+            dataContext.SaveChanges();
+
+            return new OkResult();
+        }
+
         public dynamic GetCurrentState()
         {
-            Player player = GetPlayer();
-            var task = dataContext.Tasks.Single(t => t.Id == player.TaskNumber);
-
-            return new
+            try
             {
-                Task = task,
-                Player = player
-            };
+                Player player = GetOrInitPlayer();
+                var task = dataContext.Tasks.Single(t => t.Id == player.TaskNumber);
+
+                return new ReturnResult(task, player);
+            }
+            catch (Exception ex)
+            {
+                //to do: log error
+                return Json(new { status = "error", message = ex.Message });
+            }
+
         }
 
         public dynamic SubmitAnswer(string answer)
@@ -52,26 +80,23 @@ namespace HabraQuest.Controllers
                 var nextTask = dataContext.Tasks.SingleOrDefault(t => t.Id == task.Id + 1);
                 if (nextTask == null)
                 {
-                    //finish
-                    return null;
+                    player.HasFinished = true;
+                    dataContext.SaveChanges();
+
+                    return new ReturnResult(task, player);
                 }
 
                 player.TaskNumber++;
                 dataContext.SaveChanges();
 
-                return new { Task = nextTask, Player = player, Feedback = GetPositiveFeedback() };
+                return new ReturnResult(nextTask, player, GetPositiveFeedback());
             }
 
-            return new
-            {
-                Task = task,
-                Player = GetPlayer(token),
-                Feedback = GetNegativeFeedback()
-            };
+            return new ReturnResult(task, player, GetNegativeFeedback());
         }
 
         readonly Random rnd = new Random();
-        private readonly string[] negatives = {"Нет.", "неа", "не верно", "Ответ не правильный", "Мимо"};
+        private readonly string[] negatives = { "Нет.", "неа", "не верно", "Ответ не правильный", "Мимо" };
         private readonly string[] positives = { "Да!", "Правильно", "Верно", "Ответ принят", "Правильно" };
         private string GetNegativeFeedback()
         {
@@ -83,7 +108,7 @@ namespace HabraQuest.Controllers
             return positives[rnd.Next(0, 5)];
         }
 
-        private Player GetPlayer(string token = null)
+        private Player GetOrInitPlayer(string token = null)
         {
             Player player = null;
             if (token == null) token = Request.Cookies["playerToken"];
@@ -101,5 +126,37 @@ namespace HabraQuest.Controllers
 
             return player ?? dataContext.Players.Single(p => p.Token.ToString() == token);
         }
+    }
+
+    public class ReturnResult
+    {
+        public dynamic Task { get; set; }
+        public dynamic Player { get; set; }
+        public string Feedback { get; set; }
+        public ReturnResult(QuestTask task, Player player, string feedback = "")
+        {
+            Task = new
+            {
+                task.Content, task.Title
+            };
+
+            Player = new
+            {
+                player.Name,
+                player.Comment,
+                player.HasFinished,
+                player.TaskNumber,
+                player.Token
+            };
+
+            Feedback = feedback;
+        }
+    }
+
+    public class FinishForm
+    {
+        public string Name { get; set; }
+        public string Message { get; set; }
+        public string Email { get; set; }
     }
 }

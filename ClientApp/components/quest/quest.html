@@ -1,21 +1,62 @@
 ﻿<div style="margin-top: 50px">
-    <div>
+    <p *ngIf="!task.title && !hasFinished"><em>Loading...</em></p>
+    <div *ngIf="!hasFinished && task.title">
         <p class="lead">
             {{task.title}}
         </p>
 
         <h3 style="max-width: 400px">{{task.content}}</h3>
-        <br />
+        <br/>
         <form (submit)="submit()">
             <div class="form-group">
                 <input type="text" name="answer" class="form-control" autofocus="autofocus" placeholder="" [(ngModel)]="answer">
-                <br />
+                <br/>
                 <a class="btn btn-success" (click)="submit()">Отправить</a>
             </div>
         </form>
-        <br />
+        <br/>
         <div [style.color]="hintColor">
             <b>{{feedback}}</b>
+        </div>
+    </div>
+    <div *ngIf="hasFinished">
+        <div class="container">
+            <div class="row">
+                <h3>Поздравляем, вы прошли все задания.</h3>
+                <br />
+                <form #f="ngForm" (submit)="finish(f.value)">
+                    <div class="col-md-6">
+                        <div class="alert alert-success"><strong><span class="glyphicon glyphicon-send"></span> Вы можете вписать свое имя на доску почета</strong></div>
+                        <div class="form-group">
+                            <label for="InputName">Ваше имя</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="name" id="InputName" placeholder="Ваше имя" required ngModel>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputMessage">Отзыв</label>
+                            <div class="input-group">
+                                <textarea name="message" id="InputMessage" class="form-control" rows="5" required ngModel></textarea>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputEmail">Если вам интересно узнать о новом квесте, пожалуйста, оставьте ваш email</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="InputEmail" name="email" placeholder="Enter Email" ngModel>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                            </div>
+                        </div>
+
+                        <a class="btn btn-info pull-right" (click)="finish(f.value)">Отправить</a>
+                    </div>
+                </form>
+
+            </div>
+
         </div>
     </div>
 </div>

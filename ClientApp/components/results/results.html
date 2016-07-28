@@ -1,22 +1,28 @@
-﻿<h1>Результаты</h1>
+﻿<p *ngIf="!results && showres"><em>Loading...</em></p>
+<div *ngIf="!showres">
+    <h3>
+        Для того, чтобы посмотреть результаты нужно пройти все уровни.
+    </h3>
+</div>
+<div *ngIf="results && showres">
+    <h3>
+        Поздравлям, вы прошли все уровни.
+    </h3>
 
-<p *ngIf="!results"><em>Loading...</em></p>
+    <h1>Уже финишировали</h1>
+    <table class='table' *ngIf="results">
+        <thead>
+            <tr>
+                <th>Имя</th>
 
-<table class='table' *ngIf="results">
-    <thead>
-        <tr>
-            <th>Место</th>
-            <th>Имя</th>
-            <th>Время финиша</th>
-            <th>Комментарии</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let result of results">
-        <td>{{ result.rank }}</td>
-        <td>{{ result.name }}</td>
-        <td>{{ result.dateFormatted }}</td>
-        <td>{{ result.summary }}</td>
-    </tr>
-    </tbody>
-</table>
+                <th>Комментарии</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let result of results">
+                <td>{{ result.name }}</td>
+                <td>{{ result.summary }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
