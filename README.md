@@ -1,5 +1,6 @@
 # HabraQuest
 Логический квест
 
-Описание - http://habrahabr.ru/post/250009/
+Описание - https://habrahabr.ru/post/306292/
+
 Квест - http://habraquest.azurewebsites.net/
